@@ -15,7 +15,7 @@ st.markdown("Ask me any physical design question, and I will generate the exact 
 # 2. Securely fetch the API key
 api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
-st.error("API Key not found. Please set the GEMINI_API_KEY environment variable.")
+  st.error("API Key not found. Please set the GEMINI_API_KEY environment variable.")
 st.stop()
 
 # 3. Load the Database & AI (Cached for speed)
