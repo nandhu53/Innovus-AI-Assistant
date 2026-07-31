@@ -10,7 +10,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 # 1. Page Configuration
 st.set_page_config(page_title="Innovus AI Full-Stack Platform", page_icon="🤖", layout="wide")
-st.title("Cadence Innovus AI Co-Pilot (SaaS Edition)")
+st.title("Cadence Innovus AI Co-Pilot")
 
 # 2. Initialize Supabase Connection using Secrets
 try:
