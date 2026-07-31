@@ -1,9 +1,11 @@
+streamlit
+supabase
 langchain
 langchain-google-genai
 langchain-community
 langchain-text-splitters
 chromadb
-sentence-transformers
-streamlit
 pypdf
+sentence-transformers
 torchvision
+pillow
