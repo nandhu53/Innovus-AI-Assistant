@@ -31,37 +31,12 @@ if "logged_in" not in st.session_state:
 if "user_email" not in st.session_state:
     st.session_state.user_email = ""
 
-# --- THE GOOGLE LOGIN FIX ---
-# Catch the secret code Google sends back in the URL
-if "code" in st.query_params:
-    try:
-        # Exchange the code for a verified user session
-        res = supabase.auth.exchange_code_for_session({"auth_code": st.query_params["code"]})
-        st.session_state.logged_in = True
-        st.session_state.user_email = res.user.email
-        # Clear the URL so it doesn't get stuck in a loop
-        st.query_params.clear()
-    except Exception as e:
-        st.error(f"Failed to process Google login: {e}")
-
-# Generate Secure Google OAuth Link
-oauth_response = supabase.auth.sign_in_with_oauth({
-    "provider": "google",
-    "options": {
-        "redirect_to": "https://innovus-ai-assistant-dxeld9bwwxefq2ztpms63w.streamlit.app"
-    }
-})
-
-# 3. Sidebar Authentication
+# 3. Sidebar Authentication (Email/Password Only for Stability)
 with st.sidebar:
     st.title("🔐 User Authentication")
     
     if not st.session_state.logged_in:
-        # The Fixed Google SSO Button
-        st.link_button("🌐 Continue with Google", oauth_response.url)
-        
-        st.divider()
-        st.markdown("### Or use Email:")
+        st.markdown("### Sign In to Access the AI")
         
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
@@ -73,6 +48,8 @@ with st.sidebar:
                     res = supabase.auth.sign_in_with_password({"email": email, "password": password})
                     st.session_state.logged_in = True
                     st.session_state.user_email = res.user.email
+                    # Clear query params to keep URL clean
+                    st.query_params.clear()
                     st.rerun()
                 except Exception as e:
                     st.error("Login Failed. Check credentials.")
