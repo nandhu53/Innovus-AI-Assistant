@@ -25,6 +25,25 @@ if not supabase_url or not api_key:
 # Initialize Supabase
 supabase: Client = create_client(supabase_url, supabase_key)
 
+# Initialize Session States
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "user_email" not in st.session_state:
+    st.session_state.user_email = ""
+
+# --- THE GOOGLE LOGIN FIX ---
+# Catch the secret code Google sends back in the URL
+if "code" in st.query_params:
+    try:
+        # Exchange the code for a verified user session
+        res = supabase.auth.exchange_code_for_session({"auth_code": st.query_params["code"]})
+        st.session_state.logged_in = True
+        st.session_state.user_email = res.user.email
+        # Clear the URL so it doesn't get stuck in a loop
+        st.query_params.clear()
+    except Exception as e:
+        st.error(f"Failed to process Google login: {e}")
+
 # Generate Secure Google OAuth Link
 oauth_response = supabase.auth.sign_in_with_oauth({
     "provider": "google",
@@ -34,11 +53,6 @@ oauth_response = supabase.auth.sign_in_with_oauth({
 })
 
 # 3. Sidebar Authentication
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "user_email" not in st.session_state:
-    st.session_state.user_email = ""
-
 with st.sidebar:
     st.title("🔐 User Authentication")
     
